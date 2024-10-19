@@ -2,8 +2,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 import numpy as np
 import matplotlib.pyplot as plt
-from .terrain import generate_reference_and_limits
-
+from terrain import generate_reference_and_limits
+import pandas as pd
 class Submarine:
     def __init__(self):
 
@@ -75,17 +75,20 @@ class Mission:
 
     @classmethod
     def from_csv(cls, file_name: str):
-        # You are required to implement this method hello world
-        pass
-
+        data = pd.read_csv(file_name)
+        reference = np.array(data['reference'])
+        cave_height = np.array(data['cave_height'])
+        cave_depth = np.array(data['cave_depth'])
+        print(data.head())  # Print the first few rows of the DataFrame
+        return cls(reference, cave_height, cave_depth)
+    
 
 class ClosedLoop:
     def __init__(self, plant: Submarine, controller):
         self.plant = plant
         self.controller = controller
 
-    def simulate(self,  mission: Mission, disturbances: np.ndarray) -> Trajectory:
-
+    def simulate(self, mission: Mission, disturbances: np.ndarray) -> Trajectory:
         T = len(mission.reference)
         if len(disturbances) < T:
             raise ValueError("Disturbances must be at least as long as mission duration")
@@ -97,7 +100,8 @@ class ClosedLoop:
         for t in range(T):
             positions[t] = self.plant.get_position()
             observation_t = self.plant.get_depth()
-            # Call your controller here
+            action_t = self.controller.compute_action(observation_t, mission.reference[t], self.plant.vel_y)  # Pass vel_y
+            actions[t] = action_t
             self.plant.transition(actions[t], disturbances[t])
 
         return Trajectory(positions)
@@ -105,3 +109,4 @@ class ClosedLoop:
     def simulate_with_random_disturbances(self, mission: Mission, variance: float = 0.5) -> Trajectory:
         disturbances = np.random.normal(0, variance, len(mission.reference))
         return self.simulate(mission, disturbances)
+
