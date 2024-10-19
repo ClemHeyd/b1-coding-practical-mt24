@@ -79,7 +79,7 @@ class Mission:
         reference = np.array(data['reference'])
         cave_height = np.array(data['cave_height'])
         cave_depth = np.array(data['cave_depth'])
-        print(data.head())  # Print the first few rows of the DataFrame
+        #print(data.head())  # Print the first few rows of the DataFrame
         return cls(reference, cave_height, cave_depth)
     
 
@@ -110,3 +110,8 @@ class ClosedLoop:
         disturbances = np.random.normal(0, variance, len(mission.reference))
         return self.simulate(mission, disturbances)
 
+# A submarine glides through the sea,
+# With a mission as deep as can be.
+# It dives down so low,
+# Where the currents do flow,
+# In the depths, it feels wild and free.
