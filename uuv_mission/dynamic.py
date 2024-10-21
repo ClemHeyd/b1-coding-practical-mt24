@@ -109,9 +109,3 @@ class ClosedLoop:
     def simulate_with_random_disturbances(self, mission: Mission, variance: float = 0.5) -> Trajectory:
         disturbances = np.random.normal(0, variance, len(mission.reference))
         return self.simulate(mission, disturbances)
-
-# A submarine glides through the sea,
-# With a mission as deep as can be.
-# It dives down so low,
-# Where the currents do flow,
-# In the depths, it feels wild and free.
